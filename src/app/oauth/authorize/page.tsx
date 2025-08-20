@@ -20,13 +20,12 @@ export default async function AuthorizePage({
   const code_challenge = params.code_challenge as string | undefined;
   const code_challenge_method = params.code_challenge_method as string | undefined;
 
-  if (!session || !session.user || !session.user.id) {
+  if (!session || !session.user) {
     const headersList = await headers();
     const host = headersList.get('host');
     const prot = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const baseUrl = `${prot}://${host}`;
 
-    const loginUrl = new URL('/api/auth/signin', baseUrl);
     const callbackUrl = new URL('/oauth/authorize', baseUrl);
 
     // Add all current search params to the callback URL
@@ -36,7 +35,9 @@ export default async function AuthorizePage({
       }
     });
 
-    loginUrl.searchParams.set('callbackUrl', callbackUrl.toString());
+    // Redirect to the home page which will trigger Supabase login
+    const loginUrl = new URL('/', baseUrl);
+    loginUrl.searchParams.set('redirectTo', callbackUrl.toString());
     return redirect(loginUrl.toString());
   }
 
@@ -73,7 +74,7 @@ export default async function AuthorizePage({
     'use server';
 
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user) {
       // This should not be reachable if the user sees the consent screen
       throw new Error('No session found during consent handling.');
     }

@@ -2,7 +2,7 @@
 
 This is a Next.js-based application that provides an MCP (Model Context Protocol) server with OAuth 2.1 authentication support. It is intended as a model for building your own MCP server in a Next.js context. It uses the [@vercel/mcp-adapter](https://github.com/vercel/mcp-adapter) to handle the MCP protocol, in order to support both SSE and Streamable HTTP transports.
 
-In addition to being an OAuth server, it also requires the user authenticate. This is currently configured to use Google as a provider, but you could authenticate users however you want (X, GitHub, your own user/password database etc.) without breaking the OAuth flow.
+In addition to being an OAuth server, it also requires the user authenticate. This is currently configured to use Supabase Auth with GitHub as a provider, but you could authenticate users with any provider supported by Supabase (Google, Facebook, Discord, etc.) without breaking the OAuth flow.
 
 ## Using with
 
@@ -63,8 +63,9 @@ Required environment variables should be in `.env`: (not `.env.local` because Pr
 ```
 DATABASE_URL="postgresql://user:pass@server/database"
 AUTH_SECRET="any random string"
-GOOGLE_CLIENT_ID="a Google OAuth client ID"
-GOOGLE_CLIENT_SECRET="a Google OAuth client secret"
+NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
+NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 REDIS_URL="rediss://user:pass@host:6379"
 ```
 
@@ -82,8 +83,9 @@ If you're using this as a template for your own Next.js app, the important parts
 To handle OAuth your app needs to be able to persist clients, access tokens, etc.. To do this it's using a PostgreSQL database accessed via Prisma. You can swap this for some other database if you want (it will be easiest if it's another Prisma-supported database).
 
 You'll also notice:
-* `src/app/auth.ts` - this implements Auth.js authentication to your app itself. It's configured to use Google as a provider, but you can change it to use any other provider supports by Auth.js. This is not required for the MCP server to work, but it's a good idea to have it in place for your own app.
-* `src/app/api/auth/[...nextauth]/route.ts` - this plumbs in the Auth.js authentication, and is again not part of the OAuth implementation.
+* `src/app/auth.ts` - this implements Supabase authentication to your app itself. It's configured to use GitHub as a provider by default, but you can change it to use any other provider supported by Supabase Auth. This is not required for the MCP server to work, but it's a good idea to have it in place for your own app.
+* `src/lib/supabase.ts` and `src/lib/supabase-server.ts` - these provide the Supabase client configuration for both client-side and server-side usage.
+* `src/middleware.ts` - this handles Supabase session refresh and management.
 
 ## Deploying to production
 

@@ -7,7 +7,7 @@ export default async function Home() {
     <div className="container">
       {session?.user ? (
         <div className="auth-container">
-          <p>Welcome {session.user.name}!</p>
+          <p>Welcome {session.user.name || session.user.email}!</p>
           <form
             action={async () => {
               "use server";
@@ -21,10 +21,10 @@ export default async function Home() {
         <form
           action={async () => {
             "use server";
-            await signIn("google");
+            await signIn("github");
           }}
         >
-          <button className="button button-signin">Sign in with Github</button>
+          <button className="button button-signin">Sign in with GitHub</button>
         </form>
       )}
     </div>
