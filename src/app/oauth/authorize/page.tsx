@@ -48,7 +48,7 @@ export default async function AuthorizePage({
           <h1 className="text-2xl font-bold mb-4">Error</h1>
           <p>Invalid authorization request.</p>
           <p className="text-xs text-gray-500 mt-4">
-            Missing client_id, redirect_uri, or response_type is not 'code'.
+            Missing client_id, redirect_uri, or response_type is not &apos;code&apos;.
           </p>
         </div>
       </main>
